@@ -27,6 +27,11 @@
         "    Remove-Item $original_dir\\$($LocaleFileNames[$i]).zip",
         "}"
     ],
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Remove-Module -Name utils"
+    ],
     "shortcuts": [
         [
             "WinSCP.exe",

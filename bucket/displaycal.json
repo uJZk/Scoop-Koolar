@@ -8,26 +8,21 @@
 	"hash": "sha1:dc375258bb0c4e6df91ea3124734de65c1b1a3ad",
 	"extract_dir": "DisplayCAL-3.8.9.3",
 	"pre_install": [
-		"if (-not (Test-Path \"$persist_dir\\APPDATA\")) {",
-		"   New-item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
-		"   New-item \"$persist_dir\\APPDATA\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
-		"   Move-Item -Path \"$env:APPDATA\\DisplayCAL\" -Destination \"$persist_dir\\APPDATA\" -ErrorAction SilentlyContinue",
-		"} else {",
-		"   Remove-Item -Path \"$env:APPDATA\\DisplayCAL\" -Recurse -ErrorAction SilentlyContinue",
-		"}"
+		"Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+		"Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\DisplayCAL\"",
+		"Remove-Module -Name utils"
 	],
 	"post_install": [
-		"Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/DoradoUtils.psm1)",
+		"Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
 		"Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\DisplayCAL\"",
-		"Remove-Module -Name DoradoUtils"
+		"Remove-Module -Name utils"
 	],
-	"uninstaller": {
-		"script": [
-			"Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/DoradoUtils.psm1)",
-			"Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\DisplayCAL\"",
-			"Remove-Module -Name DoradoUtils"
-		]
-	},
+	"pre_uninstall": [
+		"Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+		"Stop-App",
+		"Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\DisplayCAL\"",
+		"Remove-Module -Name utils"
+	],
 	"shortcuts": [
 		[
 			"DisplayCAL.exe",

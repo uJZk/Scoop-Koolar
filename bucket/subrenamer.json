@@ -8,6 +8,11 @@
     "url": "https://github.com/qwqcode/SubRenamer/releases/download/v2.4.0/SubRenamer_windows_amd64.zip",
     "hash": "8b93403d950dc2e6642e92a30cd7d1f7e2ab0f0d316f25101621218161e14efe",
     "extract_dir": "SubRenamer",
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Remove-Module -Name utils"
+    ],
     "shortcuts": [
         [
             "SubRenamer.exe",

@@ -13,9 +13,14 @@
         "    Copy-Item \"$dir\\YuzuModDownloader.exe\" -Destination \"$scoopdir\\apps\\yuzu\\current\\\" -Force",
         "}"
     ],
-    "uninstaller": {
-        "script": "Remove-Item \"$scoopdir\\apps\\yuzu\\current\\YuzuModDownloader.exe\" -Force -ErrorAction SilentlyContinue"
-    },
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App \"$scoopdir\\apps\\yuzu\\current\\YuzuModDownloader.exe\" -ErrorAction SilentlyContinue",
+        "Stop-App",
+        "Remove-Module -Name utils",
+        "",
+        "Remove-Item \"$scoopdir\\apps\\yuzu\\current\\YuzuModDownloader.exe\" -Force -ErrorAction SilentlyContinue"
+    ],
     "checkver": "github",
     "autoupdate": {
         "url": "https://github.com/amakvana/SwitchEmuModDownloader/releases/download/v$version/SwitchEmuModDownloader-$version-Windows-x64.zip"

@@ -24,28 +24,23 @@
         "ModOrganizer.ini"
     ],
     "pre_install": [
-        "if (-not (Test-Path \"$persist_dir\\LOCALAPPDATA\")) {",
-        "   New-item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
-        "   New-item \"$persist_dir\\LOCALAPPDATA\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
-        "   Move-Item -Path \"$env:LOCALAPPDATA\\ModOrganizer\" -Destination \"$persist_dir\\LOCALAPPDATA\" -ErrorAction SilentlyContinue",
-        "} else {",
-        "   Remove-Item -Path \"$env:LOCALAPPDATA\\ModOrganizer\" -Recurse -ErrorAction SilentlyContinue",
-        "}",
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\ModOrganizer\"",
+        "Remove-Module -Name utils",
         "",
         "if(-not (Test-Path \"$dir/ModOrganizer.ini\")) { Add-Content \"$dir/ModOrganizer.ini\" $null }"
     ],
     "post_install": [
-        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/DoradoUtils.psm1)",
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Mount-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\ModOrganizer\"",
-        "Remove-Module -Name DoradoUtils"
+        "Remove-Module -Name utils"
     ],
-    "uninstaller": {
-        "script": [
-            "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/DoradoUtils.psm1)",
-            "Dismount-ExternalRuntimeData -Target \"$env:LOCALAPPDATA\\ModOrganizer\"",
-            "Remove-Module -Name DoradoUtils"
-        ]
-    },
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Dismount-ExternalRuntimeData -Target \"$env:LOCALAPPDATA\\ModOrganizer\"",
+        "Remove-Module -Name utils"
+    ],
     "checkver": {
         "url": "https://api.github.com/repos/ModOrganizer2/modorganizer/releases?per_page=1",
         "jsonpath": "$..tag_name",

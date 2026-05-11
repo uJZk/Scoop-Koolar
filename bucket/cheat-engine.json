@@ -26,6 +26,11 @@
             ]
         }
     },
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Remove-Module -Name utils"
+    ],
     "persist": "languages\\language.ini",
     "checkver": {
         "url": "https://api.github.com/repos/ardittristan/cheat-engine/releases?per_page=1",

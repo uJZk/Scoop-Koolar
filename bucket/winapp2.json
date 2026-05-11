@@ -21,13 +21,11 @@
         "    Copy-Item \"$dir\\Winapp2.ini\" -Destination \"$scoopdir\\apps\\ccleaner\\current\\Winapp2.ini\" -Force",
         "}"
     ],
-    "uninstaller": {
-        "script": [
-            "Remove-Item \"$scoopdir\\apps\\ccleaner\\current\\x64\\Winapp2.ini\" -Force -ErrorAction SilentlyContinue",
-            "Remove-Item \"$scoopdir\\apps\\ccleaner\\current\\x86\\Winapp2.ini\" -Force -ErrorAction SilentlyContinue",
-            "Remove-Item \"$scoopdir\\apps\\ccleaner\\current\\Winapp2.ini\" -Force -ErrorAction SilentlyContinue"
-        ]
-    },
+    "pre_uninstall": [
+        "Remove-Item \"$scoopdir\\apps\\ccleaner\\current\\x64\\Winapp2.ini\" -Force -ErrorAction SilentlyContinue",
+        "Remove-Item \"$scoopdir\\apps\\ccleaner\\current\\x86\\Winapp2.ini\" -Force -ErrorAction SilentlyContinue",
+        "Remove-Item \"$scoopdir\\apps\\ccleaner\\current\\Winapp2.ini\" -Force -ErrorAction SilentlyContinue"
+    ],
     "checkver": {
         "url": "https://github.com/MoscaDotTo/Winapp2/raw/master/Winapp2.ini",
         "regex": "Version:\\s*(\\S+)"

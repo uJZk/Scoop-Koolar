@@ -12,33 +12,28 @@
         ]
     ],
     "pre_install": [
-        "if (-not (Test-Path \"$persist_dir\\APPDATA\")) {",
-        "   New-item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
-        "   New-item \"$persist_dir\\APPDATA\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
-        "   Move-Item -Path \"$env:APPDATA\\Francochinois\\eudic\" -Destination \"$persist_dir\\APPDATA\" -ErrorAction SilentlyContinue",
-        "} else {",
-        "   Remove-Item -Path \"$env:APPDATA\\Francochinois\\eudic\" -Recurse -ErrorAction SilentlyContinue",
-        "}",
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Francochinois\\eudic\"",
+        "Remove-Module -Name utils",
         "",
         "if(-not (Test-Path \"$dir/eudic.exe\")) { Add-Content \"$dir/eudic.exe\" $null }"
     ],
     "post_install": [
-        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/DoradoUtils.psm1)",
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Francochinois\\eudic\"",
-        "Remove-Module -Name DoradoUtils",
+        "Remove-Module -Name utils",
         "",
         "Remove-Item \"$dir\\eudic.exe\"",
         "Expand-7ZipArchive \"$dir\\eudic_win.exe\" \"$dir\\\" -Removal",
         "Expand-7ZipArchive \"$dir\\app.7z\" \"$dir\" -Removal",
         "Remove-Item \"$dir\\uninst.exe.nsis\",\"$dir\\`$PLUGINSDIR\" -Recurse -ErrorAction SilentlyContinue"
     ],
-    "uninstaller": {
-        "script": [
-            "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/DoradoUtils.psm1)",
-            "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\Francochinois\\eudic\"",
-            "Remove-Module -Name DoradoUtils"
-        ]
-    },
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\Francochinois\\eudic\"",
+        "Remove-Module -Name utils"
+    ],
     "checkver": {
         "url": "https://www.eudic.net/v4/en/app/download",
         "regex": "eudic_win.zip\\?v=(\\S+)\""

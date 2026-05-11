@@ -9,6 +9,11 @@
             "hash": "78b9e079e83b76e575fe72cd9b0bb56f1a01fefd23224dbecf03f10cdc7e1087"
         }
     },
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Remove-Module -Name utils"
+    ],
     "shortcuts": [
         [
             "Wabbajack.exe",

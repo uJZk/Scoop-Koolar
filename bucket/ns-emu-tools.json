@@ -8,6 +8,11 @@
     "url": "https://github.com/triwinds/ns-emu-tools/releases/download/0.6.2/NsEmuTools.exe",
     "hash": "c70a6c8ec43168cc7f3027e947062b058d5bcba368129544c1ac6cd377611bd0",
     "pre_install": "if(-not (Test-Path \"$dir/config.json\")) { Add-Content \"$dir/config.json\" $null }",
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Remove-Module -Name utils"
+    ],
     "shortcuts": [
         [
             "NsEmuTools.exe",

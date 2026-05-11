@@ -15,26 +15,21 @@
         ]
     ],
     "pre_install": [
-        "if (-not (Test-Path \"$persist_dir\\APPDATA\")) {",
-        "   New-item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
-        "   New-item \"$persist_dir\\APPDATA\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
-        "   Move-Item -Path \"$env:APPDATA\\CrystalIdea Software\\Uninstall Tool\" -Destination \"$persist_dir\\APPDATA\" -ErrorAction SilentlyContinue",
-        "} else {",
-        "   Remove-Item -Path \"$env:APPDATA\\CrystalIdea Software\\Uninstall Tool\" -Recurse -ErrorAction SilentlyContinue",
-        "}"
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Initialize-ExternalRuntimeData -Source \"$env:APPDATA\\CrystalIdea Software\\Uninstall Tool\" -Target \"$persist_dir\\APPDATA\"",
+        "Remove-Module -Name utils"
     ],
     "post_install": [
-        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/DoradoUtils.psm1)",
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\CrystalIdea Software\\Uninstall Tool\"",
-        "Remove-Module -Name DoradoUtils"
+        "Remove-Module -Name utils"
     ],
-    "uninstaller": {
-        "script": [
-            "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/DoradoUtils.psm1)",
-            "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\CrystalIdea Software\\Uninstall Tool\"",
-            "Remove-Module -Name DoradoUtils"
-        ]
-    },
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\CrystalIdea Software\\Uninstall Tool\"",
+        "Remove-Module -Name utils"
+    ],
     "checkver": {
         "github": "https://github.com/crystalidea/uninstall-tool"
     },

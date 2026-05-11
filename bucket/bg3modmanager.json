@@ -5,6 +5,11 @@
     "license": "MIT",
     "url": "https://github.com/LaughingLeader/BG3ModManager/releases/download/1.0.12.9/BG3ModManager_Latest.zip",
     "hash": "d28670a6b4abee65c0818c67a90540df141971193eaff53d47a8af2743dd22d3",
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Remove-Module -Name utils"
+    ],
     "shortcuts": [
         [
             "BG3ModManager.exe",

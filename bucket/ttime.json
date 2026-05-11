@@ -19,31 +19,24 @@
         ]
     ],
     "pre_install": [
-        "if (-not (Test-Path \"$persist_dir\\userDataConfig\")) {",
-        "   New-item \"$persist_dir\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
-        "   New-item \"$persist_dir\\userDataConfig\" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null",
-        "   Move-Item -Path \"$env:APPDATA\\time-translate\\userDataConfig\" -Destination \"$persist_dir\\userDataConfig\" -ErrorAction SilentlyContinue",
-        "} else {",
-        "   Remove-Item -Path \"$env:APPDATA\\time-translate\\userDataConfig\" -Recurse -ErrorAction SilentlyContinue",
-        "}",
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Initialize-ExternalRuntimeData -Source \"$env:APPDATA\\time-translate\\userDataConfig\" -Target \"$persist_dir\\APPDATA\"",
+        "Remove-Module -Name utils",
         "",
         "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
         "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force -ErrorAction 'SilentlyContinue'"
     ],
     "post_install": [
-        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/DoradoUtils.psm1)",
-        "Mount-ExternalRuntimeData -Source \"$persist_dir\\userDataConfig\" -Target \"$env:APPDATA\\time-translate\\userDataConfig\"",
-        "Remove-Module -Name DoradoUtils"
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\time-translate\\userDataConfig\"",
+        "Remove-Module -Name utils"
     ],
-    "uninstaller": {
-        "script": [
-            "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/DoradoUtils.psm1)",
-            "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\time-translate\\userDataConfig\"",
-            "Remove-Module -Name DoradoUtils",
-            "",
-            "Remove-Item -Path \"$env:APPDATA\\time-translate\" -Recurse -ErrorAction SilentlyContinue"
-        ]
-    },
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\time-translate\\userDataConfig\"",
+        "Remove-Module -Name utils"
+    ],
     "checkver": {
         "url": "https://github.com/InkTimeRecord/TTime/releases.atom",
         "regex": "<title>[vV]?(\\S+)</title>"

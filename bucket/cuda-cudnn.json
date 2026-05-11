@@ -39,6 +39,11 @@
             "Remove-Item \"$dir\\cudnn*\" -Recurse"
         ]
     },
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Remove-Module -Name utils"
+    ],
     "env_add_path": "bin",
     "env_set": {
         "CUDA_PATH": "$dir"

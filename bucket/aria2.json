@@ -4,7 +4,7 @@
     "homepage": "https://github.com/myfreeer/aria2-build-msys2",
     "license": "GPL-3.0-or-later",
     "suggest": {
-        "imFile": "Koolar/imfile"
+        "imFile": "Koolar/motrix-next"
     },
     "architecture": {
         "64bit": {
@@ -18,22 +18,24 @@
     },
     "bin": "aria2c.exe",
     "post_install": [
-        "if (Test-Path \"$scoopdir\\apps\\imfile\\current\\imFile.exe\") {",
-        "    if (Test-Path \"$scoopdir\\apps\\imfile\\current\\resources\\engine\\aria2c.exe\") {",
-        "        Remove-Item \"$scoopdir\\apps\\imfile\\current\\resources\\engine\\aria2c_exe_bac\" -ErrorAction SilentlyContinue",
-        "        Rename-Item \"$scoopdir\\apps\\imfile\\current\\resources\\engine\\aria2c.exe\" 'aria2c_exe_bac'",
+        "if (Test-Path \"$scoopdir\\apps\\motrix-next\\current\\motrix-next.exe\") {",
+        "    if (Test-Path \"$scoopdir\\apps\\motrix-next\\current\\motrixnext-aria2c.exe\") {",
+        "        Remove-Item \"$scoopdir\\apps\\motrix-next\\current\\motrixnext-aria2c_exe_bac\" -ErrorAction SilentlyContinue",
+        "        Rename-Item \"$scoopdir\\apps\\motrix-next\\current\\motrixnext-aria2c.exe\" 'motrixnext-aria2c_exe_bac'",
         "    }",
-        "    Copy-Item \"$dir\\aria2c.exe\" \"$scoopdir\\apps\\imfile\\current\\resources\\engine\\aria2c.exe\" | Out-Null",
+        "    Copy-Item \"$dir\\aria2c.exe\" \"$scoopdir\\apps\\motrix-next\\current\\motrixnext-aria2c.exe\" | Out-Null",
         "}"
     ],
-    "uninstaller": {
-        "script": [
-            "if (Test-Path \"$scoopdir\\apps\\imfile\\current\\resources\\engine\\aria2c_exe_bac\") {",
-            "    Remove-Item \"$scoopdir\\apps\\imfile\\current\\resources\\engine\\aria2c.exe\" -Force",
-            "    Rename-Item \"$scoopdir\\apps\\imfile\\current\\resources\\engine\\aria2c_exe_bac\" 'aria2c.exe'",
-            "}"
-        ]
-    },
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Remove-Module -Name utils",
+        "",
+        "if (Test-Path \"$scoopdir\\apps\\motrix-next\\current\\motrixnext-aria2c_exe_bac\") {",
+        "    Remove-Item \"$scoopdir\\apps\\motrix-next\\current\\motrixnext-aria2c.exe\" -Force",
+        "    Rename-Item \"$scoopdir\\apps\\motrix-next\\current\\motrixnext-aria2c_exe_bac\" 'motrixnext-aria2c.exe'",
+        "}"
+    ],
     "checkver": {
         "url": "https://api.github.com/repos/myfreeer/aria2-build-msys2/releases?per_page=1",
         "jsonpath": "$..tag_name",

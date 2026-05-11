@@ -8,6 +8,11 @@
     "url": "https://sk-data.special-k.info/SpecialK.7z",
     "hash": "bc501d48354ad8e950b4c62b18c5d2641cbf5a1c1eb3fe23699ff7f2500a2e9d",
     "pre_install": "if(-not (Test-Path \"$dir/SKIF.ini\")) { Add-Content \"$dir/SKIF.ini\" $null }",
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-App",
+        "Remove-Module -Name utils"
+    ],
     "shortcuts": [
         [
             "SKIF.exe",
