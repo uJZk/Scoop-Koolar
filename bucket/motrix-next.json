@@ -25,12 +25,12 @@
     "persist": "binaries\\aria2.conf",
     "pre_install": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
-        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\com.motrix.next\"",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\com.motrix.next\"",
         "Remove-Module -Name utils"
     ],
     "post_install": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
-        "Mount-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\com.motrix.next\"",
+        "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\com.motrix.next\"",
         "Remove-Module -Name utils",
         "",
         "if (Test-Path \"$scoopdir\\apps\\aria2\\current\\aria2c.exe\") {",
@@ -41,7 +41,7 @@
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Stop-App",
-        "Dismount-ExternalRuntimeData -Target \"$env:LOCALAPPDATA\\com.motrix.next\"",
+        "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\com.motrix.next\"",
         "Remove-Module -Name utils",
         "",
         "Remove-Item \"$env:APPDATA\\com.motrix.next\" -Recurse -ErrorAction SilentlyContinue"
