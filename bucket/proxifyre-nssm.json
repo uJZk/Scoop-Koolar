@@ -1,0 +1,68 @@
+{
+    "version": "2.5.2",
+    "description": "ProxiFyre is a Windows SOCKS5 proxifier that leverages NDISAPI to transparently route TCP and UDP traffic on a per-application basis.",
+    "homepage": "https://github.com/wiresock/proxifyre",
+    "license": "AGPL-3.0",
+    "depends": "nssm",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/wiresock/proxifyre/releases/download/v2.2.1/ProxiFyre-v2.2.1-x64-signed.zip",
+            "hash": "c38ca1caa68cd730712f5c0911e4240711bf9e7684988ae64ed04ec693cce899"
+        },
+        "32bit": {
+            "url": "https://github.com/wiresock/proxifyre/releases/download/v2.2.1/ProxiFyre-v2.2.1-x86-signed.zip",
+            "hash": "4ae6614a776963191e7878432fb933282df9f5ab417e3a50fca8b7a876293030"
+        },
+        "arm64": {
+            "url": "https://github.com/wiresock/proxifyre/releases/download/v2.2.1/ProxiFyre-v2.2.1-ARM64-signed.zip",
+            "hash": "c68f2134879d426d6cc783a517dd5f37dbdd1860e33414e26aed587724882471"
+        }
+    },
+    "persist": "app-config.json",
+    "notes": [
+        "ProxiFyre requires Windows Packet Filter (WinpkFilter) driver to be installed on your system. You can download it from https://github.com/ntkernel/winpkfilter/releases.",
+        "Change the service's configuration by running: nssm edit 'ProxiFyre'",
+        "Start the service by running: nssm start 'ProxiFyre'",
+        "Stop the service by running: nssm stop 'ProxiFyre'",
+        "Restart the service by running: nssm restart 'ProxiFyre'",
+        "Querying the service's status by running: nssm status 'ProxiFyre'",
+        "Remove the service by running: nssm remove 'ProxiFyre' confirm",
+        "You should remove the service before uninstalling this package."
+    ],
+    "pre_install": [
+        "if(-not (Test-Path \"$dir/app-config.json\")) { Add-Content \"$dir/app-config.json\" $null }"
+    ],
+    "post_install": [
+        "sudo -E --inline powershell -NoProfile -ExecutionPolicy Bypass -Command `\"",
+        "   $service = Get-Service -Name 'ProxiFyre' -ErrorAction SilentlyContinue;",
+        "   if ($service -eq $null) {",
+        "       Write-Host 'Service not found, creating...' -ForegroundColor Yellow;",
+        "       nssm install 'ProxiFyre' '$dir\\ProxiFyre.exe'; ",
+        "       nssm set 'ProxiFyre' AppPriority ABOVE_NORMAL_PRIORITY_CLASS;",
+        "       Write-Host 'ProxiFyre has been set as a service, it will automatically start when the system starts.' -ForegroundColor Yellow;",
+        "       Write-Host 'The process priority has been set to higher than normal.' -ForegroundColor Yellow;",
+        "   };",
+        "   Write-Host 'Creating firewall exception...' -ForegroundColor Yellow;",
+        "   New-NetFirewallRule -DisplayName 'ProxiFyre' -Direction Inbound -Program '$dir\\ProxiFyre.exe' -Protocol TCP -Action Allow",
+        "   New-NetFirewallRule -DisplayName 'ProxiFyre' -Direction Inbound -Program '$dir\\ProxiFyre.exe' -Protocol UDP -Action Allow",
+        "`\""
+    ],
+    "pre_uninstall": [
+        "Write-Host 'Removing firewall exception...' -ForegroundColor Yellow",
+        "sudo -E --inline powershell -NoProfile -ExecutionPolicy Bypass -Command `\"Remove-NetFirewallRule -DisplayName 'ProxiFyre'`\""
+    ],
+    "checkver": "github",
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/wiresock/proxifyre/releases/download/v$version/ProxiFyre-v$version-x64-signed.zip"
+            },
+            "32bit": {
+                "url": "https://github.com/wiresock/proxifyre/releases/download/v$version/ProxiFyre-v$version-x86-signed.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/wiresock/proxifyre/releases/download/v$version/ProxiFyre-v$version-ARM64-signed.zip"
+            }
+        }
+    }
+}
