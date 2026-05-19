@@ -21,12 +21,12 @@
     "persist": "app-config.json",
     "notes": [
         "ProxiFyre requires Windows Packet Filter (WinpkFilter) driver to be installed on your system. You can download it from https://github.com/ntkernel/winpkfilter/releases.",
-        "Change the service's configuration by running: nssm edit 'ProxiFyre'",
-        "Start the service by running: nssm start 'ProxiFyre'",
-        "Stop the service by running: nssm stop 'ProxiFyre'",
-        "Restart the service by running: nssm restart 'ProxiFyre'",
-        "Querying the service's status by running: nssm status 'ProxiFyre'",
-        "Remove the service by running: nssm remove 'ProxiFyre' confirm",
+        "Change the service's configuration by running: nssm edit ProxiFyre",
+        "Start the service by running: nssm start ProxiFyre",
+        "Stop the service by running: nssm stop ProxiFyre",
+        "Restart the service by running: nssm restart ProxiFyre",
+        "Querying the service's status by running: nssm status ProxiFyre",
+        "Remove the service by running: nssm remove ProxiFyre confirm",
         "You should remove the service before uninstalling this package."
     ],
     "pre_install": [
@@ -35,24 +35,24 @@
     "post_install": [
         "$postInstallScript = \"$dir\\_post_install.ps1\"",
         "Set-Content -Path $postInstallScript -Value @\"",
-        "`$service = Get-Service -Name 'ProxiFyre' -ErrorAction SilentlyContinue",
+        "`$service = Get-Service -Name ProxiFyre -ErrorAction SilentlyContinue",
         "if (`$null -eq `$service) {",
         "    Write-Host 'Service not found, creating...' -ForegroundColor Yellow",
-        "    nssm install 'ProxiFyre' '$dir\\ProxiFyre.exe'",
-        "    nssm set 'ProxiFyre' AppPriority ABOVE_NORMAL_PRIORITY_CLASS",
+        "    nssm install ProxiFyre '$dir\\ProxiFyre.exe'",
+        "    nssm set ProxiFyre AppPriority ABOVE_NORMAL_PRIORITY_CLASS",
         "    Write-Host 'ProxiFyre has been set as a service, it will automatically start when the system starts.' -ForegroundColor Yellow",
         "    Write-Host 'The process priority has been set to higher than normal.' -ForegroundColor Yellow",
         "}",
         "Write-Host 'Creating firewall exception...' -ForegroundColor Yellow",
-        "New-NetFirewallRule -DisplayName 'ProxiFyre' -Direction Inbound -Program '$original_dir\\ProxiFyre.exe' -Protocol TCP -Action Allow",
-        "New-NetFirewallRule -DisplayName 'ProxiFyre' -Direction Inbound -Program '$original_dir\\ProxiFyre.exe' -Protocol UDP -Action Allow",
+        "New-NetFirewallRule -DisplayName ProxiFyre -Direction Inbound -Program '$original_dir\\ProxiFyre.exe' -Protocol TCP -Action Allow",
+        "New-NetFirewallRule -DisplayName ProxiFyre -Direction Inbound -Program '$original_dir\\ProxiFyre.exe' -Protocol UDP -Action Allow",
         "\"@",
         "sudo powershell -NoProfile -ExecutionPolicy Bypass -File \"$postInstallScript\"",
         "Remove-Item \"$postInstallScript\" -ErrorAction SilentlyContinue"
     ],
     "pre_uninstall": [
         "Write-Host 'Removing firewall exception...' -ForegroundColor Yellow",
-        "sudo powershell -NoProfile -ExecutionPolicy Bypass -Command \"Remove-NetFirewallRule -DisplayName 'ProxiFyre'\""
+        "sudo powershell -NoProfile -ExecutionPolicy Bypass -Command \"Remove-NetFirewallRule -DisplayName ProxiFyre\""
     ],
     "checkver": "github",
     "autoupdate": {
