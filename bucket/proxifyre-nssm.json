@@ -20,7 +20,7 @@
     },
     "persist": "app-config.json",
     "notes": [
-        "ProxiFyre requires Windows Packet Filter (WinpkFilter) driver to be installed on your system. You can download it from https://github.com/ntkernel/winpkfilter/releases.",
+        "ProxiFyre requires Windows Packet Filter (WinpkFilter) driver to be installed on your system. You can download it from https://github.com/wiresock/ndisapi/releases.",
         "Change the service's configuration by running: nssm edit ProxiFyre",
         "Start the service by running: nssm start ProxiFyre",
         "Stop the service by running: nssm stop ProxiFyre",
