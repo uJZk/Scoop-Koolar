@@ -34,9 +34,8 @@
         "Remove-Module -Name utils",
         "",
         "if (Test-Path \"$scoopdir\\apps\\aria2\\current\\aria2c.exe\") {",
-        "    Remove-Item \"$dir\\motrixnext-aria2c_exe_bac\" -ErrorAction SilentlyContinue",
         "    if (Test-Path \"$dir\\motrixnext-aria2c.exe\") {",
-        "        Rename-Item \"$dir\\motrixnext-aria2c.exe\" 'motrixnext-aria2c_exe_bac'",
+        "        Rename-Item \"$dir\\motrixnext-aria2c.exe\" 'motrixnext-aria2c_exe_bac' -ErrorAction SilentlyContinue",
         "    }",
         "    Copy-Item \"$scoopdir\\apps\\aria2\\current\\aria2c.exe\" \"$dir\\motrixnext-aria2c.exe\" | Out-Null",
         "}"
