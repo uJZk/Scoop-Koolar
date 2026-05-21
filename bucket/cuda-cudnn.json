@@ -21,6 +21,7 @@
             "}",
             "Get-ChildItem \"$dir\" -Exclude $names | Remove-Item -Recurse -Force",
             "",
+            "Write-Host",
             "Write-Host 'Downloading cuDNN...' -ForegroundColor Yellow",
             "if (-not (Get-Command aria2c -ErrorAction SilentlyContinue)) {",
             "    Invoke-WebRequest -Uri 'https://developer.nvidia.com/cudnn-downloads?target_os=Windows&target_arch=x86_64&target_version=Agnostic&cuda_version=12' -OutFile \"$dir\\cudnn.html\"",

@@ -96,7 +96,6 @@
         "$FinalConfig = $ConfigContent -join \"`r`n\"",
         "foreach ($f in @('PotPlayerMini64.ini', 'PotPlayerMini.ini')) {",
         "    if (-not (Test-Path \"$persist_dir/$f\")) {",
-        "        Write-Host 'File' $f 'does not exists. Creating' -f Yellow",
         "        Set-Content \"$dir/$f\" $FinalConfig -Encoding Ascii",
         "    }",
         "}"
