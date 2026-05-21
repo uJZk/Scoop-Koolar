@@ -49,7 +49,6 @@
         "    <arguments>run -c \"%BASE%\\config.json\"</arguments>",
         "    <download from=\"\" to=\"%BASE%\\config.json\" />",
         "    <log mode=\"reset\"></log>",
-        "    <priority>abovenormal</priority>",
         "</service>",
         "'@",
         "}"
