@@ -4,9 +4,13 @@
     "homepage": "https://sing-box.sagernet.org/",
     "license": "GPL-3.0-or-later",
     "depends": "Koolar/winsw",
+    "suggest": {
+        "Koolar/proxifyre-winsw": "A Windows SOCKS5 proxifier that leverages NDISAPI to transparently route TCP and UDP traffic on a per-application basis. It can be used together with sing-box to proxy applications that do not support SOCKS5 proxy natively."
+    },
     "notes": [
         "sing-box is installed as a Windows service through WinSW.",
-        "If you want to use TUN mode, please run the sing-box service with administrator privileges."
+        "If you want to use TUN mode, please run the sing-box service with administrator privileges.",
+        "Please set system proxy manually if you want to use."
     ],
     "architecture": {
         "64bit": {
@@ -45,7 +49,8 @@
         "    <priority>abovenormal</priority>",
         "</service>",
         "'@",
-        "Write-Host \"Please add a config URL to sing-box.xml or manually place your config.json in the persist directory before running.\" -ForegroundColor Red",
+        "Write-Host",
+        "Write-Host \"Please add a config URL to sing-box.xml or manually place your config.json in the persist directory before starting.\" -ForegroundColor Red",
         "}"
     ],
     "post_install": [
