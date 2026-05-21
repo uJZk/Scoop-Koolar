@@ -96,6 +96,7 @@
         "config.d",
         "config.json",
         "cache.db",
+        "tailscale",
         "sing-box.xml"
     ],
     "checkver": {
