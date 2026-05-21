@@ -34,13 +34,16 @@
         "Remove-Module -Name utils",
         "",
         "if (Test-Path \"$scoopdir\\apps\\aria2\\current\\aria2c.exe\") {",
-        "    Rename-Item \"$dir\\motrixnext-aria2c.exe\" 'motrixnext-aria2c_exe_bac' -ErrorAction SilentlyContinue",
+        "    Remove-Item \"$dir\\motrixnext-aria2c_exe_bac\" -ErrorAction SilentlyContinue",
+        "    if (Test-Path \"$dir\\motrixnext-aria2c.exe\") {",
+        "        Rename-Item \"$dir\\motrixnext-aria2c.exe\" 'motrixnext-aria2c_exe_bac'",
+        "    }",
         "    Copy-Item \"$scoopdir\\apps\\aria2\\current\\aria2c.exe\" \"$dir\\motrixnext-aria2c.exe\" | Out-Null",
         "}"
     ],
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
-        "Stop-App",
+        "Stop-App \"$scoopdir\\apps\\motrix-next\\current\"",
         "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\com.motrix.next\"",
         "Remove-Module -Name utils",
         "",
