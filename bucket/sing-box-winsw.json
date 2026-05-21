@@ -36,7 +36,7 @@
         "   [System.IO.File]::WriteAllText(\"$persist_dir\\config.json\", \"{}`n\", $utf8NoBom)",
         "}",
         "if (!(Test-Path \"$persist_dir\\cache.db\")) { New-Item -Path \"$persist_dir\\cache.db\" -ItemType File | Out-Null }",
-        "if (!(Test-Path \"$dir\\sing-box.xml\")) {",
+        "if (!(Test-Path \"$persist_dir\\sing-box.xml\")) {",
         "    Set-Content -Path \"$dir\\sing-box.xml\" -Encoding UTF8 -Value @'",
         "<service>",
         "    <id>sing-box</id>",
