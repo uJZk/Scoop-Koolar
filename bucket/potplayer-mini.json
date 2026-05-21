@@ -102,7 +102,6 @@
     ],
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
-        "Stop-App",
         "Remove-Module -Name utils",
         "",
         "Remove-Item $env:APPDATA/Daum -Recurse -ErrorAction SilentlyContinue",

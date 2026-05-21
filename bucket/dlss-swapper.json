@@ -7,7 +7,6 @@
     "hash": "27cf65f6b5c0f5f8e964b6a1c3e6b42a43110f6e7f2a035da8fed7f3fde25661",
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
-        "Stop-App",
         "Remove-Module -Name utils"
     ],
     "shortcuts": [

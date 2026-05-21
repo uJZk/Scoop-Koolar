@@ -77,38 +77,6 @@ function Dismount-ExternalRuntimeData {
     }
 }
 
-function Stop-App {
-    param (
-        [Parameter(
-            Position = 0,
-            ValueFromPipeline,
-            HelpMessage = "Array of paths to search for executables"
-        )]
-        [string[]]
-        $Path
-    )
-
-    if (-not $Path) {
-        $Path = @(
-            $dir,
-            (Split-Path $dir -Parent) + '\current'
-        )
-    }
-
-    $allProcesses = Get-Process
-
-    foreach ($app_dir in $Path) {
-        $allProcesses |
-        Where-Object {
-            $_.Modules.FileName -like "$app_dir\*"
-        } |
-        ForEach-Object {
-            Stop-Process -Id $_.Id -Force -ErrorAction SilentlyContinue
-            Wait-Process -Id $_.Id -ErrorAction SilentlyContinue -Timeout 30
-        }
-    }
-}
-
 Export-ModuleMember `
     -Function `
-    Initialize-ExternalRuntimeData, Mount-ExternalRuntimeData, Dismount-ExternalRuntimeData, Stop-App
+    Initialize-ExternalRuntimeData, Mount-ExternalRuntimeData, Dismount-ExternalRuntimeData

@@ -28,7 +28,6 @@
     ],
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
-        "Stop-App",
         "Remove-Module -Name utils",
         "",
         "if (Test-Path \"$scoopdir\\apps\\motrix-next\\current\\motrixnext-aria2c_exe_bac\") {",
