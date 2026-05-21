@@ -34,6 +34,9 @@
         "if (!(Test-Path \"$persist_dir\\config.json\")) {",
         "   $utf8NoBom = New-Object System.Text.UTF8Encoding($false)",
         "   [System.IO.File]::WriteAllText(\"$persist_dir\\config.json\", \"{}`n\", $utf8NoBom)",
+        "} elseif ([string]::IsNullOrWhiteSpace((Get-Content -Path \"$persist_dir\\config.json\" -Raw))) {",
+        "   Write-Host",
+        "   Write-Host \"Please add a config URL to sing-box.xml or manually place your config.json in the persist directory before starting.\" -ForegroundColor Red",
         "}",
         "if (!(Test-Path \"$persist_dir\\cache.db\")) { New-Item -Path \"$persist_dir\\cache.db\" -ItemType File | Out-Null }",
         "if (!(Test-Path \"$persist_dir\\sing-box.xml\")) {",
@@ -49,8 +52,6 @@
         "    <priority>abovenormal</priority>",
         "</service>",
         "'@",
-        "Write-Host",
-        "Write-Host \"Please add a config URL to sing-box.xml or manually place your config.json in the persist directory before starting.\" -ForegroundColor Red",
         "}"
     ],
     "post_install": [
