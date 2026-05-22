@@ -3,9 +3,6 @@
     "description": "A full-featured download manager — rebuilt from the ground up.",
     "homepage": "https://motrix-next.pages.dev/",
     "license": "MIT",
-    "suggest": {
-        "aria2": "Koolar/aria2"
-    },
     "architecture": {
         "64bit": {
             "url": "https://github.com/AnInsomniacy/motrix-next/releases/download/v3.9.0/MotrixNext_3.9.0_x64-setup.exe#/dl.7z",
@@ -31,14 +28,7 @@
     "post_install": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\com.motrix.next\"",
-        "Remove-Module -Name utils",
-        "",
-        "if (Test-Path \"$scoopdir\\apps\\aria2\\current\\aria2c.exe\") {",
-        "    if (Test-Path \"$dir\\motrixnext-aria2c.exe\") {",
-        "        Rename-Item \"$dir\\motrixnext-aria2c.exe\" 'motrixnext-aria2c_exe_bac' -ErrorAction SilentlyContinue",
-        "    }",
-        "    Copy-Item \"$scoopdir\\apps\\aria2\\current\\aria2c.exe\" \"$dir\\motrixnext-aria2c.exe\" | Out-Null",
-        "}"
+        "Remove-Module -Name utils"
     ],
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
