@@ -1,6 +1,0 @@
-
-version: "1"
-rules:
-  - base: main
-    upstream: shovel-org:main
-    mergeMethod: merge
