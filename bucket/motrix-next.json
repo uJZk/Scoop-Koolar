@@ -1,16 +1,16 @@
 {
-    "version": "3.9.0",
+    "version": "3.9.1",
     "description": "A full-featured download manager — rebuilt from the ground up.",
     "homepage": "https://motrix-next.pages.dev/",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/AnInsomniacy/motrix-next/releases/download/v3.9.0/MotrixNext_3.9.0_x64-setup.exe#/dl.7z",
-            "hash": "f963b69236b52ac980f28a91fba5ceaa8d566f377cecf4e8d26938d19842bd14"
+            "url": "https://github.com/AnInsomniacy/motrix-next/releases/download/v3.9.1/MotrixNext_3.9.1_x64-setup.exe#/dl.7z",
+            "hash": "a310b60d2534f30823224c1a070e2b473cbf62ae9cc7da6d327787ecedca2963"
         },
         "arm64": {
-            "url": "https://github.com/AnInsomniacy/motrix-next/releases/download/v3.9.0/MotrixNext_3.9.0_arm64-setup.exe#/dl.7z",
-            "hash": "aeb41a490406f5c33b46dc0ba50a1087b2cdcdd0f518070660b19eb98c8895ab"
+            "url": "https://github.com/AnInsomniacy/motrix-next/releases/download/v3.9.1/MotrixNext_3.9.1_arm64-setup.exe#/dl.7z",
+            "hash": "c895c052c88c33f3936b8a2784db2d619ecd91f6bdc6d0e51d02964fbaf6211f"
         }
     },
     "shortcuts": [
