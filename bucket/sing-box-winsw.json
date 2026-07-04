@@ -1,5 +1,5 @@
 {
-    "version": "1.14.0-alpha.34",
+    "version": "1.14.0-alpha.37",
     "description": "The universal proxy platform.",
     "homepage": "https://sing-box.sagernet.org/",
     "license": "GPL-3.0-or-later",
@@ -14,19 +14,19 @@
     ],
     "architecture": {
         "64bit": {
-            "url": "https://github.com/SagerNet/sing-box/releases/download/v1.14.0-alpha.34/sing-box-1.14.0-alpha.34-windows-amd64.zip",
-            "hash": "bb21d2cf3b8a8b2201604dc5766dbaa0ce2cda3706448c4345b2ecc565c1c9c1",
-            "extract_dir": "sing-box-1.14.0-alpha.34-windows-amd64"
+            "url": "https://github.com/SagerNet/sing-box/releases/download/v1.14.0-alpha.37/sing-box-1.14.0-alpha.37-windows-amd64.zip",
+            "hash": "3189679b72a0d21e701b098b725ae443baba4075d4ffb250dcbcff1ea9ed7505",
+            "extract_dir": "sing-box-1.14.0-alpha.37-windows-amd64"
         },
         "32bit": {
-            "url": "https://github.com/SagerNet/sing-box/releases/download/v1.14.0-alpha.34/sing-box-1.14.0-alpha.34-windows-386.zip",
-            "hash": "350e3a8725dea2fa9be5a9360d601a1f6215efab0df0bf14fdb22dc963e70612",
-            "extract_dir": "sing-box-1.14.0-alpha.34-windows-386"
+            "url": "https://github.com/SagerNet/sing-box/releases/download/v1.14.0-alpha.37/sing-box-1.14.0-alpha.37-windows-386.zip",
+            "hash": "ab68da5a87e33b8e0e710208f33339b6cb50bd5f42bf240cb5a507b9e9320557",
+            "extract_dir": "sing-box-1.14.0-alpha.37-windows-386"
         },
         "arm64": {
-            "url": "https://github.com/SagerNet/sing-box/releases/download/v1.14.0-alpha.34/sing-box-1.14.0-alpha.34-windows-arm64.zip",
-            "hash": "039fce63a1d4e9c36fc31b2cec854345930d0bf882e68d8727fe1060c8f95833",
-            "extract_dir": "sing-box-1.14.0-alpha.34-windows-arm64"
+            "url": "https://github.com/SagerNet/sing-box/releases/download/v1.14.0-alpha.37/sing-box-1.14.0-alpha.37-windows-arm64.zip",
+            "hash": "630434c5898637a665f0e71f9af47a502f6d67bd40ac0c10ae00cb840b6e176b",
+            "extract_dir": "sing-box-1.14.0-alpha.37-windows-arm64"
         }
     },
     "pre_install": [
