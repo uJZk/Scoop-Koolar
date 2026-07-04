@@ -49,6 +49,7 @@
         "    <arguments>run -c \"%BASE%\\config.json\"</arguments>",
         "    <download from=\"\" to=\"%BASE%\\config.json\" />",
         "    <log mode=\"reset\"></log>",
+        "    <onfailure action=\"restart\" delay=\"5 sec\" />",
         "</service>",
         "'@",
         "}"
