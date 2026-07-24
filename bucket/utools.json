@@ -27,7 +27,11 @@
         "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\uTools\"",
         "Remove-Module -Name utils",
         "",
-        "Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-$matchBitness.7z\" \"$dir\" -Removal",
+        "if (Test-Path \"$dir\\`$PLUGINSDIR\\app-64.7z\") {",
+        "    Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
+        "} else {",
+        "    Expand-7zipArchive \"$dir\\`$PLUGINSDIR\\app-32.7z\" \"$dir\" -Removal",
+        "}",
         "Remove-Item \"$dir\\`$PLUGINSDIR\" -Recurse -Force -ErrorAction 'SilentlyContinue'"
     ],
     "post_install": [
