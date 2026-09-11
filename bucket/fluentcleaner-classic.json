@@ -7,7 +7,7 @@
         "64bit": {
             "url": "https://github.com/builtbybel/FluentCleaner/releases/download/classic-1.17.227/FluentCleaner-Classic-net48.zip",
             "hash": "90788364c2e5db8078762828616909f6be776205a387c2a9a54744a54d619a12",
-            "extract_dir": "FluentCleaner-net48"
+            "extract_dir": "FluentCleaner-Classic-net48"
         }
     },
     "shortcuts": [
@@ -30,6 +30,6 @@
     },
     "autoupdate": {
         "url": "$matchUrl",
-        "extract_dir": "FluentCleaner-net48"
+        "extract_dir": "FluentCleaner-Classic-net48"
     }
 }
