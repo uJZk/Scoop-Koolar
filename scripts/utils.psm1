@@ -20,7 +20,10 @@ function Initialize-ExternalRuntimeData {
     if (-not (Test-Path $Source)) {
         New-Item (Split-Path $Source -Parent) -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
         New-Item $Source -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
-        Move-Item -Path $Target -Destination $Source -ErrorAction SilentlyContinue
+        if (Test-Path $Target) {
+            Get-ChildItem -Path $Target -Force | Move-Item -Destination $Source -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path $Target -Recurse -Force -ErrorAction SilentlyContinue
+        }
     } else {
         Remove-Item -Path $Target -Recurse -ErrorAction SilentlyContinue
     }
