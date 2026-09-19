@@ -8,6 +8,9 @@
         "Koolar/winsw",
         "extras/vcredist2022"
     ],
+    "suggest": {
+        "UrBackup Client": "Koolar/urbackup-client-winsw"
+    },
     "notes": [
         "The UrBackup server is registered as a Windows service named 'urbackup-server' through WinSW. The web interface is at http://localhost:55414/",
         "Startup arguments come from the upstream 'args.txt' in the app directory, which is replaced on every update so that upstream's defaults always apply. Put your own additional arguments (one per line) in 'extra_args_0.txt' - it is persisted ('$persist_dir\\extra_args_0.txt') and its lines are appended to 'args.txt'.",

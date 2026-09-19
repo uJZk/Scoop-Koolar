@@ -5,6 +5,9 @@
     "homepage": "https://www.urbackup.org/",
     "license": "AGPL-3.0-or-later",
     "depends": "Koolar/winsw",
+    "suggest": {
+        "UrBackup Server": "Koolar/urbackup-server-winsw"
+    },
     "notes": [
         "The UrBackup client backend is registered as a Windows service named 'urbackup-client' through WinSW.",
         "Startup arguments come from the upstream 'args.txt' in the app directory, which is replaced on every update so that upstream's defaults always apply. Put your own additional arguments (one per line) in 'extra_args_0.txt' - it is persisted ('$persist_dir\\extra_args_0.txt') and its lines are appended to 'args.txt'.",
