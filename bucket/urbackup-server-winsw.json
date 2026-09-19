@@ -4,10 +4,7 @@
     "description": "UrBackup server, installed as a Windows service via WinSW. Provides a web interface on port 55414.",
     "homepage": "https://www.urbackup.org/",
     "license": "AGPL-3.0-or-later",
-    "depends": [
-        "Koolar/winsw",
-        "extras/vcredist2022"
-    ],
+    "depends": "Koolar/winsw",
     "suggest": {
         "UrBackup Client": "Koolar/urbackup-client-winsw"
     },
