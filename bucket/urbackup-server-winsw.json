@@ -1,0 +1,113 @@
+{
+    "##": "The upstream NSIS installer embeds the x86/x64 builds of the UrBackup binaries under identical file names. pre_install extracts it with 7-Zip's '-aot' (every variant survives as '<name>_1', ...) and then keeps only the x64 build (IMAGE_FILE_MACHINE_AMD64, 0x8664), which is the only architecture this manifest declares. The versioned files inside 'urbackup' (web interface, SQL init script) are refreshed from the newly downloaded version so that only the database files are carried over. That refresh names its four target files explicitly, so it can never touch a database file.",
+    "version": "2.5.38",
+    "description": "UrBackup server, installed as a Windows service via WinSW. Provides a web interface on port 55414.",
+    "homepage": "https://www.urbackup.org/",
+    "license": "AGPL-3.0-or-later",
+    "depends": [
+        "Koolar/winsw",
+        "extras/vcredist2022"
+    ],
+    "notes": [
+        "The UrBackup server is registered as a Windows service named 'urbackup-server' through WinSW. The web interface is at http://localhost:55414/",
+        "Startup arguments come from the upstream 'args.txt' in the app directory, which is replaced on every update so that upstream's defaults always apply. Put your own additional arguments (one per line) in 'extra_args_0.txt' - it is persisted ('$persist_dir\\extra_args_0.txt') and its lines are appended to 'args.txt'.",
+        "Server settings, users and the backup index are stored in the SQLite databases inside the persisted 'urbackup' directory, so they survive updates. Set the backup storage path in the web interface - it must not live inside this directory.",
+        "The files shipped inside 'urbackup' (web interface, database init script) are refreshed from the new version on every update; everything else in that directory is kept.",
+        "Useful commands: winsw status|start|stop|restart|refresh|uninstall \"$dir\\urbackup-server.xml\"",
+        "Windows Firewall will ask for permission the first time the server listens on its ports (55413-55415 TCP, 35623 TCP/UDP).",
+        "Do not install this alongside the official UrBackup server installer - both register a server service."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://hndl.urbackup.org/Server/2.5.38/UrBackup%20Server%202.5.38.exe",
+            "hash": "b381551a3cb46e29064319f17e134a0786b1073f61004c68497e954998c51086"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive -Path \"$dir\\$fname\" -DestinationPath $dir -Switches '-aot' -Removal",
+        "Remove-Item (Join-Path $dir '$PLUGINSDIR'), (Join-Path $dir '$TEMP') -Recurse -Force -ErrorAction SilentlyContinue",
+        "$peMachine = { param($Path) try { $fs = [System.IO.File]::OpenRead($Path); $br = New-Object System.IO.BinaryReader $fs; $fs.Position = 0x3C; $fs.Position = $br.ReadInt32() + 4; $machine = $br.ReadUInt16(); $br.Dispose(); $machine } catch { 0 } }",
+        "Get-ChildItem -LiteralPath $dir -Recurse -File | Where-Object { $_.Extension -in '.exe', '.dll' } | Group-Object { $_.DirectoryName + '|' + ($_.BaseName -replace '_[0-9]+$', '') + $_.Extension } | ForEach-Object {",
+        "    $variants = $_.Group | ForEach-Object { [pscustomobject]@{ File = $_; Machine = & $peMachine $_.FullName } }",
+        "    if (@($variants.Machine | Sort-Object -Unique).Count -lt 2) { return }",
+        "    $pick = ($variants | Where-Object Machine -eq 0x8664 | Select-Object -First 1).File",
+        "    if (!$pick) { return }",
+        "    ($variants | Where-Object { $_.File.FullName -ne $pick.FullName }).File | Remove-Item -Force",
+        "    $targetName = ($pick.BaseName -replace '_[0-9]+$', '') + $pick.Extension",
+        "    if ($pick.Name -ne $targetName) { Move-Item -LiteralPath $pick.FullName -Destination (Join-Path $pick.DirectoryName $targetName) -Force }",
+        "}",
+        "if (Test-Path \"$persist_dir\\urbackup\") {",
+        "    foreach ($item in 'www', 'status.htm', 'backup_server_init.sql', 'dataplan_db.txt') {",
+        "        Remove-Item -LiteralPath (Join-Path \"$persist_dir\\urbackup\" $item) -Recurse -Force -ErrorAction SilentlyContinue",
+        "        Copy-Item -LiteralPath (Join-Path \"$dir\\urbackup\" $item) -Destination (Join-Path \"$persist_dir\\urbackup\" $item) -Recurse -Force",
+        "    }",
+        "    Remove-Item -LiteralPath \"$dir\\urbackup\" -Recurse -Force",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\extra_args_0.txt\")) { New-Item -Path \"$dir\\extra_args_0.txt\" -ItemType File -Force | Out-Null }",
+        "if (!(Test-Path \"$persist_dir\\urbackup-server.xml\")) { Set-Content -Path \"$dir\\urbackup-server.xml\" -Encoding UTF8 -Value @'",
+        "<service>",
+        "    <id>urbackup-server</id>",
+        "    <name>UrBackup Server</name>",
+        "    <description>UrBackup server for image and file backups of clients.</description>",
+        "    <executable>%BASE%\\urbackup_srv.exe</executable>",
+        "    <arguments>cmdline</arguments>",
+        "    <log mode=\"reset\"></log>",
+        "    <onfailure action=\"restart\" delay=\"10 sec\" />",
+        "</service>",
+        "'@",
+        "}"
+    ],
+    "post_install": [
+        "$winswConfig = \"$dir\\urbackup-server.xml\"",
+        "$postInstallScript = \"$dir\\_post_install.ps1\"",
+        "Set-Content -Path $postInstallScript -Value @\"",
+        "`$service = Get-Service -Name urbackup-server -ErrorAction SilentlyContinue",
+        "if (`$null -eq `$service) {",
+        "    Write-Host 'Service not found, installing UrBackup Server as a service...' -ForegroundColor Yellow",
+        "    winsw install '$winswConfig'",
+        "} else {",
+        "    Write-Host 'Service already exists, refreshing...' -ForegroundColor Yellow",
+        "    winsw refresh '$winswConfig'",
+        "}",
+        "\"@",
+        "Write-Host",
+        "sudo powershell -NoProfile -ExecutionPolicy Bypass -File \"$postInstallScript\"",
+        "Remove-Item \"$postInstallScript\" -ErrorAction SilentlyContinue",
+        "Write-Host \"List of useful commands:\" -ForegroundColor Blue",
+        "Write-Host \"winsw status '$winswConfig'\" -ForegroundColor Blue",
+        "Write-Host \"winsw refresh '$winswConfig'\" -ForegroundColor Blue",
+        "Write-Host \"winsw start '$winswConfig'\" -ForegroundColor Blue",
+        "Write-Host \"winsw stop '$winswConfig'\" -ForegroundColor Blue",
+        "Write-Host \"winsw restart '$winswConfig'\" -ForegroundColor Blue"
+    ],
+    "pre_uninstall": [
+        "$preUninstallScript = \"$dir\\_pre_uninstall.ps1\"",
+        "Set-Content -Path $preUninstallScript -Value @\"",
+        "`$service = Get-Service -Name urbackup-server -ErrorAction SilentlyContinue",
+        "if (`$null -ne `$service) {",
+        "    Write-Host 'Stopping and uninstalling UrBackup Server service...' -ForegroundColor Yellow",
+        "    winsw stop '$dir\\urbackup-server.xml'",
+        "    winsw uninstall '$dir\\urbackup-server.xml'",
+        "}",
+        "\"@",
+        "Write-Host",
+        "sudo powershell -NoProfile -ExecutionPolicy Bypass -File \"$preUninstallScript\"",
+        "Remove-Item \"$preUninstallScript\" -ErrorAction SilentlyContinue"
+    ],
+    "persist": [
+        "extra_args_0.txt",
+        "urbackup",
+        "urbackup-server.xml"
+    ],
+    "checkver": {
+        "url": "https://www.urbackup.org/server_changelog.html",
+        "regex": "<h2 id=\"\\d+-\\d{4}-\\d{2}-\\d{2}\">(?<version>\\d+(?:\\.\\d+)*) \\(\\d{4}-\\d{2}-\\d{2}\\)</h2>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://hndl.urbackup.org/Server/$version/UrBackup%20Server%20$version.exe"
+            }
+        }
+    }
+}

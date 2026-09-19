@@ -1,0 +1,108 @@
+{
+    "##": "The upstream NSIS installer embeds the x86/arm64/x64 builds of the UrBackup binaries under identical file names. pre_install extracts it with 7-Zip's '-aot' (every variant survives as '<name>_1', '<name>_2', ...) and then keeps only the x64 build (IMAGE_FILE_MACHINE_AMD64, 0x8664), which is the only architecture this manifest declares.",
+    "version": "2.5.32",
+    "description": "UrBackup client backend without the tray icon, installed as a Windows service via WinSW.",
+    "homepage": "https://www.urbackup.org/",
+    "license": "AGPL-3.0-or-later",
+    "depends": "Koolar/winsw",
+    "notes": [
+        "The UrBackup client backend is registered as a Windows service named 'urbackup-client' through WinSW.",
+        "Startup arguments come from the upstream 'args.txt' in the app directory, which is replaced on every update so that upstream's defaults always apply. Put your own additional arguments (one per line) in 'extra_args_0.txt' - it is persisted ('$persist_dir\\extra_args_0.txt') and its lines are appended to 'args.txt'.",
+        "Client settings and state are kept in the persisted 'urbackup' directory ('urbackup\\data\\settings.cfg').",
+        "Useful commands: winsw status|start|stop|restart|refresh|uninstall \"$dir\\urbackup-client.xml\"",
+        "The tray icon and GUI are not included. Configure the client from the server web interface or with 'UrBackupClient' on the command line.",
+        "Do not install this alongside the official UrBackup client installer - both register a client backend service."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://hndl.urbackup.org/Client/2.5.32/UrBackup%20Client%20NoTray%202.5.32.exe",
+            "hash": "79f5c9f0e7cd5e9b7d4f4daa5069a60a29f0b423d5dca31bced31759c94cc31a"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive -Path \"$dir\\$fname\" -DestinationPath $dir -Switches '-aot' -Removal",
+        "Remove-Item (Join-Path $dir '$PLUGINSDIR'), (Join-Path $dir '$TEMP') -Recurse -Force -ErrorAction SilentlyContinue",
+        "$peMachine = { param($Path) try { $fs = [System.IO.File]::OpenRead($Path); $br = New-Object System.IO.BinaryReader $fs; $fs.Position = 0x3C; $fs.Position = $br.ReadInt32() + 4; $machine = $br.ReadUInt16(); $br.Dispose(); $machine } catch { 0 } }",
+        "Get-ChildItem -LiteralPath $dir -Recurse -File | Where-Object { $_.Extension -in '.exe', '.dll' } | Group-Object { $_.DirectoryName + '|' + ($_.BaseName -replace '_[0-9]+$', '') + $_.Extension } | ForEach-Object {",
+        "    $variants = $_.Group | ForEach-Object { [pscustomobject]@{ File = $_; Machine = & $peMachine $_.FullName } }",
+        "    if (@($variants.Machine | Sort-Object -Unique).Count -lt 2) { return }",
+        "    $pick = ($variants | Where-Object Machine -eq 0x8664 | Select-Object -First 1).File",
+        "    if (!$pick) { return }",
+        "    ($variants | Where-Object { $_.File.FullName -ne $pick.FullName }).File | Remove-Item -Force",
+        "    $targetName = ($pick.BaseName -replace '_[0-9]+$', '') + $pick.Extension",
+        "    if ($pick.Name -ne $targetName) { Move-Item -LiteralPath $pick.FullName -Destination (Join-Path $pick.DirectoryName $targetName) -Force }",
+        "}",
+        "if (!(Test-Path \"$persist_dir\\extra_args_0.txt\")) { New-Item -Path \"$dir\\extra_args_0.txt\" -ItemType File -Force | Out-Null }",
+        "if (!(Test-Path \"$persist_dir\\urbackup-client.xml\")) { Set-Content -Path \"$dir\\urbackup-client.xml\" -Encoding UTF8 -Value @'",
+        "<service>",
+        "    <id>urbackup-client</id>",
+        "    <name>UrBackup Client</name>",
+        "    <description>UrBackup client backend for image and file backups.</description>",
+        "    <executable>%BASE%\\UrBackupClientBackend.exe</executable>",
+        "    <arguments>cmdline</arguments>",
+        "    <log mode=\"reset\"></log>",
+        "    <onfailure action=\"restart\" delay=\"10 sec\" />",
+        "</service>",
+        "'@",
+        "}"
+    ],
+    "post_install": [
+        "$winswConfig = \"$dir\\urbackup-client.xml\"",
+        "$postInstallScript = \"$dir\\_post_install.ps1\"",
+        "Set-Content -Path $postInstallScript -Value @\"",
+        "`$service = Get-Service -Name urbackup-client -ErrorAction SilentlyContinue",
+        "if (`$null -eq `$service) {",
+        "    Write-Host 'Service not found, installing UrBackup Client as a service...' -ForegroundColor Yellow",
+        "    winsw install '$winswConfig'",
+        "} else {",
+        "    Write-Host 'Service already exists, refreshing...' -ForegroundColor Yellow",
+        "    winsw refresh '$winswConfig'",
+        "}",
+        "\"@",
+        "Write-Host",
+        "sudo powershell -NoProfile -ExecutionPolicy Bypass -File \"$postInstallScript\"",
+        "Remove-Item \"$postInstallScript\" -ErrorAction SilentlyContinue",
+        "Write-Host \"List of useful commands:\" -ForegroundColor Blue",
+        "Write-Host \"winsw status '$winswConfig'\" -ForegroundColor Blue",
+        "Write-Host \"winsw refresh '$winswConfig'\" -ForegroundColor Blue",
+        "Write-Host \"winsw start '$winswConfig'\" -ForegroundColor Blue",
+        "Write-Host \"winsw stop '$winswConfig'\" -ForegroundColor Blue",
+        "Write-Host \"winsw restart '$winswConfig'\" -ForegroundColor Blue"
+    ],
+    "pre_uninstall": [
+        "$preUninstallScript = \"$dir\\_pre_uninstall.ps1\"",
+        "Set-Content -Path $preUninstallScript -Value @\"",
+        "`$service = Get-Service -Name urbackup-client -ErrorAction SilentlyContinue",
+        "if (`$null -ne `$service) {",
+        "    Write-Host 'Stopping and uninstalling UrBackup Client service...' -ForegroundColor Yellow",
+        "    winsw stop '$dir\\urbackup-client.xml'",
+        "    winsw uninstall '$dir\\urbackup-client.xml'",
+        "}",
+        "\"@",
+        "Write-Host",
+        "sudo powershell -NoProfile -ExecutionPolicy Bypass -File \"$preUninstallScript\"",
+        "Remove-Item \"$preUninstallScript\" -ErrorAction SilentlyContinue"
+    ],
+    "bin": [
+        [
+            "UrBackupClient_cmd.exe",
+            "UrBackupClient"
+        ]
+    ],
+    "persist": [
+        "extra_args_0.txt",
+        "urbackup",
+        "urbackup-client.xml"
+    ],
+    "checkver": {
+        "url": "https://www.urbackup.org/client_changelog.html",
+        "regex": "<h2 id=\"\\d+(?:-windows-only)?-\\d{4}-\\d{2}-\\d{2}\">(?<version>\\d+(?:\\.\\d+)*)(?: Windows only)? \\(\\d{4}-\\d{2}-\\d{2}\\)</h2>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://hndl.urbackup.org/Client/$version/UrBackup%20Client%20NoTray%20$version.exe"
+            }
+        }
+    }
+}
