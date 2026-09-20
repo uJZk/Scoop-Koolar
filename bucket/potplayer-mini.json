@@ -102,6 +102,7 @@
     ],
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('PotPlayerMini64', 'PotPlayerMini') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
         "Remove-Module -Name utils",
         "",
         "Remove-Item $env:APPDATA/Daum -Recurse -ErrorAction SilentlyContinue",

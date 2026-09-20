@@ -7,6 +7,7 @@
     "hash": "78cf171ae54b0a045c772b839e14b071e8d2dc3f306758df2837809995103489",
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('DLSS Swapper') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
         "Remove-Module -Name utils"
     ],
     "shortcuts": [

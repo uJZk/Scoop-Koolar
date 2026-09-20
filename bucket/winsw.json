@@ -14,6 +14,11 @@
         }
     },
     "bin": "WinSW.exe",
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('WinSW') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
+        "Remove-Module -Name utils"
+    ],
     "checkver": {
         "url": "https://api.github.com/repos/winsw/winsw/releases",
         "jsonpath": "$[?(@.prerelease == true)].tag_name",

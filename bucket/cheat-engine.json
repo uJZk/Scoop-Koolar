@@ -28,6 +28,7 @@
     },
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('cheatengine-x86_64', 'cheatengine-i386') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
         "Remove-Module -Name utils"
     ],
     "persist": "languages\\language.ini",
