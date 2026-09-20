@@ -70,6 +70,7 @@
     ],
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('PowerToys', 'PowerToys.KeyboardManager', 'PowerToys.MouseWithoutBorders', 'PowerToys.Run', 'PowerToys.FancyZones', 'PowerToys.Peek', 'PowerToys.PowerLauncher', 'PowerToys.Settings') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
         "Dismount-ExternalRuntimeData -Target \"$env:LOCALAPPDATA\\Microsoft\\PowerToys\"",
         "Remove-Module -Name utils"
     ],

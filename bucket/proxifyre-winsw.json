@@ -69,6 +69,8 @@
         "Write-Host \"winsw restart '$winswConfig'\" -ForegroundColor Blue"
     ],
     "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('ProxiFyre') -ServiceName @('ProxiFyre') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
         "$preUninstallScript = \"$dir\\_pre_uninstall.ps1\"",
         "Set-Content -Path $preUninstallScript -Value @\"",
         "`$service = Get-Service -Name ProxiFyre -ErrorAction SilentlyContinue",

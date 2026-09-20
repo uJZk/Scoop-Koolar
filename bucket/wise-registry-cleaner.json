@@ -25,6 +25,11 @@
         "Backup",
         "config.ini"
     ],
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('WiseRegCleaner') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
+        "Remove-Module -Name utils"
+    ],
     "checkver": {
         "url": "https://www.wisecleaner.com/download.html",
         "regex": "WRCFree.+?([\\d.]+)?\\.zip"

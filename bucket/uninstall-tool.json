@@ -26,6 +26,7 @@
     ],
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('UninstallToolPortable') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
         "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\CrystalIdea Software\\Uninstall Tool\"",
         "Remove-Module -Name utils"
     ],

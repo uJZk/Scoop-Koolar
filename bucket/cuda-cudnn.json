@@ -42,6 +42,7 @@
     },
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('nvcc', 'ptxas', 'nvlink', 'cudafe++', 'compute-sanitizer') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
         "Remove-Module -Name utils"
     ],
     "env_add_path": "bin",
