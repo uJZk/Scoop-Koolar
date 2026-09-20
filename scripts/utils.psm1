@@ -104,6 +104,9 @@ function Stop-RunningApplication {
         ServiceNames = @($runningServices | ForEach-Object { $_.Name })
         ProcessIds = @($running | ForEach-Object { $_.Id })
         ProcessNames = @($running | ForEach-Object { $_.ProcessName })
+        ProcessPaths = @($running | ForEach-Object {
+            try { $_.Path } catch { $null }
+        } | Where-Object { $_ })
         Timestamp = (Get-Date).ToString('o')
     }
 
@@ -176,6 +179,94 @@ function Stop-RunningApplication {
     return $true
 }
 
+function Start-RunningApplication {
+    <#
+    .SYNOPSIS
+        Restores services and explicitly recorded application executables.
+
+    .DESCRIPTION
+        Reads the state written by Stop-RunningApplication. A process is only
+        restarted when its executable path was recorded and still exists; this
+        avoids guessing how to launch transient worker processes.
+    #>
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $StatePath,
+        [string[]] $ServiceName,
+        [string[]] $ExecutablePath,
+        [int] $WaitSeconds = 20
+    )
+
+    if (-not (Test-Path -LiteralPath $StatePath)) {
+        return $false
+    }
+
+    try {
+        $state = [IO.File]::ReadAllText((Resolve-Path -LiteralPath $StatePath), [Text.Encoding]::UTF8) | ConvertFrom-Json
+    } catch {
+        throw "Failed to read application state ${StatePath}: $($_.Exception.Message)"
+    }
+
+    if (-not $state.WasRunning) {
+        Remove-Item -LiteralPath $StatePath -Force -ErrorAction SilentlyContinue
+        return $false
+    }
+
+    $servicesToStart = @($state.ServiceNames | Where-Object { $_ })
+    if ($servicesToStart.Count -eq 0) {
+        $servicesToStart = @($ServiceName | Where-Object { $_ })
+    }
+    foreach ($name in $servicesToStart) {
+        try {
+            $service = Get-Service -Name $name -ErrorAction Stop
+            if ($service.Status -ne 'Running') {
+                Start-Service -Name $name -ErrorAction Stop
+            }
+        } catch {
+            throw "Failed to start service ${name}: $($_.Exception.Message)"
+        }
+    }
+
+    $pathsToStart = @($ExecutablePath | Where-Object { $_ })
+    if ($pathsToStart.Count -eq 0) {
+        $pathsToStart = @($state.ProcessPaths | Where-Object { $_ })
+    }
+    foreach ($path in ($pathsToStart | Select-Object -Unique)) {
+        if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+            throw "Cannot restart application; executable was not found: $path"
+        }
+        try {
+            Start-Process -FilePath $path -ErrorAction Stop | Out-Null
+        } catch {
+            throw "Failed to start application ${path}: $($_.Exception.Message)"
+        }
+    }
+
+    $deadline = (Get-Date).AddSeconds($WaitSeconds)
+    do {
+        Start-Sleep -Milliseconds 250
+        $remainingServices = @($servicesToStart | ForEach-Object {
+            Get-Service -Name $_ -ErrorAction SilentlyContinue
+        } | Where-Object { $_.Status -ne 'Running' })
+        $missingProcesses = @($pathsToStart | Where-Object {
+            $name = [IO.Path]::GetFileNameWithoutExtension($_)
+            @(Get-Process -Name $name -ErrorAction SilentlyContinue).Count -eq 0
+        })
+    } while (($remainingServices.Count -gt 0 -or $missingProcesses.Count -gt 0) -and (Get-Date) -lt $deadline)
+
+    if ($remainingServices.Count -gt 0) {
+        throw "Failed to start service(s): $([string]::Join(', ', $remainingServices.Name))"
+    }
+    if ($missingProcesses.Count -gt 0) {
+        throw "Failed to start application(s): $([string]::Join(', ', $missingProcesses))"
+    }
+
+    Remove-Item -LiteralPath $StatePath -Force -ErrorAction SilentlyContinue
+    return $true
+}
+
 Export-ModuleMember `
     -Function `
-    Initialize-ExternalRuntimeData, Mount-ExternalRuntimeData, Dismount-ExternalRuntimeData, Get-ProcessIsForeground, Stop-RunningApplication
+    Initialize-ExternalRuntimeData, Mount-ExternalRuntimeData, Dismount-ExternalRuntimeData, Get-ProcessIsForeground, Stop-RunningApplication, Start-RunningApplication

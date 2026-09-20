@@ -21,12 +21,13 @@
     "post_install": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Francochinois\\eudic\"",
-        "Remove-Module -Name utils",
         "",
         "Remove-Item \"$dir\\eudic.exe\"",
         "Expand-7ZipArchive \"$dir\\eudic_win.exe\" \"$dir\\\" -Removal",
         "Expand-7ZipArchive \"$dir\\app.7z\" \"$dir\" -Removal",
-        "Remove-Item \"$dir\\uninst.exe.nsis\",\"$dir\\`$PLUGINSDIR\" -Recurse -ErrorAction SilentlyContinue"
+        "Remove-Item \"$dir\\uninst.exe.nsis\",\"$dir\\`$PLUGINSDIR\" -Recurse -ErrorAction SilentlyContinue",
+        "Start-RunningApplication -StatePath \"$persist_dir\\.pre-uninstall-state.json\" -ExecutablePath \"$dir\\eudic.exe\"",
+        "Remove-Module -Name utils"
     ],
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",

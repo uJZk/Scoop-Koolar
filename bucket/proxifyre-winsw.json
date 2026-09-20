@@ -42,6 +42,7 @@
         "}"
     ],
     "post_install": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "$winswConfig = \"$dir\\ProxiFyre.xml\"",
         "$postInstallScript = \"$dir\\_post_install.ps1\"",
         "Set-Content -Path $postInstallScript -Value @\"",
@@ -60,6 +61,7 @@
         "\"@",
         "Write-Host",
         "sudo powershell -NoProfile -ExecutionPolicy Bypass -File \"$postInstallScript\"",
+        "sudo powershell -NoProfile -ExecutionPolicy Bypass -Command \"Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1); Start-RunningApplication -StatePath '$persist_dir\\.pre-uninstall-state.json' -ServiceName @('ProxiFyre')\"",
         "Remove-Item \"$postInstallScript\" -ErrorAction SilentlyContinue",
         "Write-Host \"List of useful commands:\" -ForegroundColor Blue",
         "Write-Host \"winsw status '$winswConfig'\" -ForegroundColor Blue",
