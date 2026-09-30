@@ -1,5 +1,5 @@
 {
-    "version": "1.7.22769.0",
+    "version": "1.7.23118.0",
     "description": "A multimedia software player developed for the Microsoft Windows operating system by South Korean Internet company Kakao.",
     "homepage": "https://potplayer.daum.net/",
     "license": {
@@ -17,7 +17,7 @@
                 "https://t1.daumcdn.net/potplayer/PotPlayer/Codec/v1/OpenCodecSetup64.exe#/codec.7z"
             ],
             "hash": [
-                "65b298578daabe10746552647ea224908b4aa32e23c1d7f1f5e2454b8420ddb7",
+                "4b9833adf53b78c2149fe13dd67f2504bf39ee30b45c03f09e5f2c25e43f9cfe",
                 "383686311183cbcf9e8d1f4a29191d05a0c3b2aa70396a2324f58e5a2ec98648"
             ],
             "shortcuts": [
@@ -53,7 +53,7 @@
                 "https://t1.daumcdn.net/potplayer/PotPlayer/Codec/v1/OpenCodecSetup.exe#/codec.7z"
             ],
             "hash": [
-                "2096146bf45adf11e7403b823fb9fa381e2bfc410b6db456ace2bb3b16cf3397",
+                "fec55e8e6de59eb745914b214c8b7ed10637c6355389523b4e46040dd860b743",
                 "8ee793feed9b6eeb21d45876932ba91494657a66b1b0df7666fd35416d805c3c"
             ],
             "shortcuts": [
