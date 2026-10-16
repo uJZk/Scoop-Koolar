@@ -1,12 +1,12 @@
 {
-    "version": "1.3.20-26.9.25",
+    "version": "1.4.0-26.10.10",
     "description": "Lovingly referred to as the Swiss Army Knife of PC gaming, Special K does a bit of everything.",
     "homepage": "https://github.com/SpecialKO/SpecialK",
     "license": {
         "identifier": "MIT"
     },
     "url": "https://sk-data.special-k.info/SpecialK.7z",
-    "hash": "472e08a561c1cda3b2389d9ae3ce71d005fc6c20d86645cdc894a46ef7531683",
+    "hash": "21608bbd6be1ba6db90fb123402674c83de1f7d7f4c17724332890fe0b53cb95",
     "pre_install": "if(-not (Test-Path \"$dir/SKIF.ini\")) { Add-Content \"$dir/SKIF.ini\" $null }",
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
