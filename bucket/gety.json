@@ -3,8 +3,7 @@
     "description": "AI-powered local file search engine.",
     "homepage": "https://gety.ai/",
     "license": "Proprietary",
-    "depends": "main/gsudo",
-    "notes": "Gety installs its Windows service using gsudo (UAC approval required). Close Gety before updating or uninstalling.",
+    "notes": "Gety installs its Windows service using Windows sudo (UAC approval required). Close Gety before updating or uninstalling.",
     "architecture": {
         "64bit": {
             "hash": "f7789d3745941f53da438993b8713ec63b64908fe81f3cca3bd11184a169106e",
@@ -58,7 +57,7 @@
         "}",
         "Start-Service -Name gety-service",
         "\"@",
-        "gsudo.exe powershell -NoProfile -ExecutionPolicy Bypass -File $serviceScript",
+        "sudo powershell -NoProfile -ExecutionPolicy Bypass -File $serviceScript",
         "if ($LASTEXITCODE) { throw \"Failed to install Gety service\" }",
         "Remove-Item -LiteralPath $serviceScript -Force",
         "Start-RunningApplication -StatePath \"$persist_dir\\.pre-uninstall-state.json\" -ExecutablePath \"$dir\\Gety.exe\"",
@@ -78,7 +77,7 @@
         "    if (`$LASTEXITCODE) { throw 'Failed to delete Gety service' }",
         "}",
         "\"@",
-        "gsudo.exe powershell -NoProfile -ExecutionPolicy Bypass -File $serviceScript",
+        "sudo powershell -NoProfile -ExecutionPolicy Bypass -File $serviceScript",
         "if ($LASTEXITCODE) { throw \"Failed to uninstall Gety service\" }",
         "Remove-Item -LiteralPath $serviceScript -Force",
         "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\ai.gety\"",
