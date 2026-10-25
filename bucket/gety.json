@@ -1,0 +1,88 @@
+{
+    "version": "0.6.5",
+    "description": "AI-powered local file search engine.",
+    "homepage": "https://gety.ai/",
+    "license": "Proprietary",
+    "depends": "main/gsudo",
+    "notes": "Gety installs its Windows service using gsudo (UAC approval required). Close Gety before updating or uninstalling.",
+    "architecture": {
+        "64bit": {
+            "hash": "f7789d3745941f53da438993b8713ec63b64908fe81f3cca3bd11184a169106e",
+            "url": "https://dl.gety.ai/Gety-x64-0.6.5-beta.exe#/dl.7z"
+        }
+    },
+    "bin": [
+        [
+            "Gety.exe",
+            "gety"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "Gety.exe",
+            "Gety"
+        ]
+    ],
+    "checkver": {
+        "url": "https://gety.ai/download/",
+        "regex": ">v([\\d.]+)</span>"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://dl.gety.ai/Gety-x64-$version-beta.exe#/dl.7z"
+            }
+        }
+    },
+    "pre_install": [
+        "Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\uninstall.exe\" -Recurse -Force -ErrorAction SilentlyContinue",
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\ai.gety\"",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\ai.gety\"",
+        "Remove-Module -Name utils"
+    ],
+    "post_install": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\ai.gety\"",
+        "Mount-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\ai.gety\"",
+        "$serviceScript = Join-Path $dir \"_service-install.ps1\"",
+        "Set-Content -LiteralPath $serviceScript -Encoding UTF8 -Value @\"",
+        "`$ErrorActionPreference = 'Stop'",
+        "`$service = Get-Service -Name gety-service -ErrorAction SilentlyContinue",
+        "if (`$service) {",
+        "    Stop-Service -Name gety-service -Force",
+        "    & sc.exe config gety-service binPath= '\"$original_dir\\gety-service.exe\"' start= auto",
+        "    if (`$LASTEXITCODE) { throw 'Failed to configure Gety service' }",
+        "} else {",
+        "    New-Service -Name gety-service -DisplayName 'Gety Service' -BinaryPathName '\"$original_dir\\gety-service.exe\"' -StartupType Automatic | Out-Null",
+        "}",
+        "Start-Service -Name gety-service",
+        "\"@",
+        "gsudo.exe powershell -NoProfile -ExecutionPolicy Bypass -File $serviceScript",
+        "if ($LASTEXITCODE) { throw \"Failed to install Gety service\" }",
+        "Remove-Item -LiteralPath $serviceScript -Force",
+        "Start-RunningApplication -StatePath \"$persist_dir\\.pre-uninstall-state.json\" -ExecutablePath \"$dir\\Gety.exe\"",
+        "Remove-Module -Name utils"
+    ],
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('Gety', 'gety-reporter', 'mcp-proxy') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
+        "$serviceScript = Join-Path $dir \"_service-uninstall.ps1\"",
+        "$utilsPath = Join-Path (Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1",
+        "Set-Content -LiteralPath $serviceScript -Encoding UTF8 -Value @\"",
+        "`$ErrorActionPreference = 'Stop'",
+        "Import-Module '$utilsPath'",
+        "Stop-RunningApplication -ProcessName @('gety-service') -ServiceName @('gety-service')",
+        "if (Get-Service -Name gety-service -ErrorAction SilentlyContinue) {",
+        "    & sc.exe delete gety-service",
+        "    if (`$LASTEXITCODE) { throw 'Failed to delete Gety service' }",
+        "}",
+        "\"@",
+        "gsudo.exe powershell -NoProfile -ExecutionPolicy Bypass -File $serviceScript",
+        "if ($LASTEXITCODE) { throw \"Failed to uninstall Gety service\" }",
+        "Remove-Item -LiteralPath $serviceScript -Force",
+        "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\ai.gety\"",
+        "Dismount-ExternalRuntimeData -Target \"$env:LOCALAPPDATA\\ai.gety\"",
+        "Remove-Module -Name utils"
+    ]
+}

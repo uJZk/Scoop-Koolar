@@ -1,0 +1,49 @@
+{
+    "version": "2.5.0-beta.15",
+    "description": "Send print jobs to Bambu Lab printers and manage printer connections.",
+    "homepage": "https://bambulab.com/en/download/bambu-connect",
+    "license": "Freeware",
+    "architecture": {
+        "64bit": {
+            "hash": "60008eeaf2ccafc4767c3e510fa3b79326633c905f17512ee6c7137dcb35bb8f",
+            "url": "https://public-cdn.bblmw.com/upgrade/bambu-connect/updates/versions/2.5.0-beta.15/bambu-connect-v2.5.0-beta.15-win32-x64.exe#/dl.7z"
+        }
+    },
+    "installer": {
+        "script": "Expand-7zipArchive -Path \"$dir\\`$PLUGINSDIR\\app-64.7z\" -DestinationPath $dir; Remove-Item \"$dir\\`$PLUGINSDIR\", \"$dir\\`$R0\" -Recurse -Force"
+    },
+    "shortcuts": [
+        [
+            "Bambu Connect.exe",
+            "Bambu Connect"
+        ]
+    ],
+    "checkver": {
+        "url": "https://public-cdn.bblmw.com/upgrade/bambu-connect/updates/beta.yml",
+        "regex": "version: ([\\d.]+-beta\\.\\d+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://public-cdn.bblmw.com/upgrade/bambu-connect/updates/versions/$version/bambu-connect-v$version-win32-x64.exe#/dl.7z"
+            }
+        }
+    },
+    "pre_install": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Bambu Connect\"",
+        "Remove-Module -Name utils"
+    ],
+    "post_install": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Bambu Connect\"",
+        "Start-RunningApplication -StatePath \"$persist_dir\\.pre-uninstall-state.json\" -ExecutablePath \"$dir\\Bambu Connect.exe\"",
+        "Remove-Module -Name utils"
+    ],
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('Bambu Connect') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
+        "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\Bambu Connect\"",
+        "Remove-Module -Name utils"
+    ]
+}

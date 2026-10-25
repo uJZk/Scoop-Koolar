@@ -1,0 +1,58 @@
+{
+    "version": "0.27.4",
+    "description": "A privacy-focussed, local-first, open-source, and ready-to-use alternative for Notion & Miro.",
+    "homepage": "https://affine.pro/",
+    "license": "MPL-2.0",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/toeverything/AFFiNE/releases/download/v0.27.4/affine-0.27.4-stable-windows-x64.exe#/dl.7z",
+            "hash": "b9719c96a92062abe4eddf4340a0f9c68997754d338f6c713b33af631f23983d"
+        },
+        "arm64": {
+            "url": "https://github.com/toeverything/AFFiNE/releases/download/v0.27.4/affine-0.27.4-stable-windows-arm64.exe#/dl.7z",
+            "hash": "25464eaaab6f23e88a98e6713383a2c28f97bb32474736978e20bf9e58cbf998"
+        }
+    },
+    "pre_install": [
+        "Expand-7zipArchive \"$dir\\AFFiNE-*-full.nupkg\" -ExtractDir 'lib\\net45' -Removal",
+        "Remove-Item \"$dir\\lib\"",
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\AFFiNE\"",
+        "Remove-Module -Name utils"
+    ],
+    "post_install": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\AFFiNE\"",
+        "Start-RunningApplication -StatePath \"$persist_dir\\.pre-uninstall-state.json\" -ExecutablePath \"$dir\\AFFiNE.exe\"",
+        "Remove-Module -Name utils"
+    ],
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('AFFiNE') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
+        "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\AFFiNE\"",
+        "Remove-Module -Name utils"
+    ],
+    "shortcuts": [
+        [
+            "AFFiNE.exe",
+            "AFFiNE"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/toeverything/AFFiNE"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/toeverything/AFFiNE/releases/download/v$version/affine-$version-stable-windows-x64.exe#/dl.7z"
+            },
+            "arm64": {
+                "url": "https://github.com/toeverything/AFFiNE/releases/download/v$version/affine-$version-stable-windows-arm64.exe#/dl.7z"
+            }
+        },
+        "hash": {
+            "url": "$baseurl/latest.yml",
+            "regex": "$basename\\s+sha512:\\s+$base64"
+        }
+    }
+}

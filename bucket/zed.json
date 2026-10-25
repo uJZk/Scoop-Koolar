@@ -23,17 +23,21 @@
     "pre_install": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Initialize-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\Zed\"",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Zed\"",
         "Remove-Module -Name utils"
     ],
     "post_install": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Mount-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\Zed\"",
+        "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Zed\"",
+        "Start-RunningApplication -StatePath \"$persist_dir\\.pre-uninstall-state.json\" -ExecutablePath \"$dir\\zed.exe\"",
         "Remove-Module -Name utils"
     ],
     "pre_uninstall": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Stop-RunningApplication -ProcessName @('Zed') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
         "Dismount-ExternalRuntimeData -Target \"$env:LOCALAPPDATA\\Zed\"",
+        "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\Zed\"",
         "Remove-Module -Name utils"
     ],
     "bin": "bin\\zed.exe",

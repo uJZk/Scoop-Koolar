@@ -1,0 +1,58 @@
+{
+    "version": "4.0.20",
+    "description": "A desktop all-in-one assistant tool for AI coding agents.",
+    "homepage": "https://ccswitch.io",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/farion1231/cc-switch/releases/download/v4.0.20/CC-Switch-v4.0.20-Windows-Portable.zip",
+            "hash": "4b65d730ceaa68a90356b882130444274acf08018556b7833ad0d1687070657a"
+        },
+        "arm64": {
+            "url": "https://github.com/farion1231/cc-switch/releases/download/v4.0.20/CC-Switch-v4.0.20-Windows-arm64-Portable.zip",
+            "hash": "99f4807623f451a1f1e2834d54fcadeb19dab3731d9c1a1dd1625b9e8d3f3bb6"
+        }
+    },
+    "pre_install": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\.cc-switch\" -Target \"$env:USERPROFILE\\.cc-switch\"",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\com.ccswitch.desktop\"",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\com.ccswitch.desktop\"",
+        "Remove-Module -Name utils"
+    ],
+    "post_install": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Mount-ExternalRuntimeData -Source \"$persist_dir\\.cc-switch\" -Target \"$env:USERPROFILE\\.cc-switch\"",
+        "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\com.ccswitch.desktop\"",
+        "Mount-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\com.ccswitch.desktop\"",
+        "Start-RunningApplication -StatePath \"$persist_dir\\.pre-uninstall-state.json\" -ExecutablePath \"$dir\\cc-switch.exe\"",
+        "Remove-Module -Name utils"
+    ],
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('cc-switch') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
+        "Dismount-ExternalRuntimeData -Target \"$env:USERPROFILE\\.cc-switch\"",
+        "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\com.ccswitch.desktop\"",
+        "Dismount-ExternalRuntimeData -Target \"$env:LOCALAPPDATA\\com.ccswitch.desktop\"",
+        "Remove-Module -Name utils"
+    ],
+    "shortcuts": [
+        [
+            "cc-switch.exe",
+            "CC-Switch"
+        ]
+    ],
+    "checkver": {
+        "github": "https://github.com/farion1231/cc-switch"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/farion1231/cc-switch/releases/download/v$version/CC-Switch-v$version-Windows-Portable.zip"
+            },
+            "arm64": {
+                "url": "https://github.com/farion1231/cc-switch/releases/download/v$version/CC-Switch-v$version-Windows-arm64-Portable.zip"
+            }
+        }
+    }
+}
