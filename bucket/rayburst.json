@@ -3,6 +3,7 @@
     "description": "A full-featured download manager powered by aria2-next.",
     "homepage": "https://github.com/AnInsomniacy/rayburst",
     "license": "MIT",
+    "notes": "Choose Rayburst in Windows Settings > Apps > Default apps to associate torrent files and supported link protocols.",
     "architecture": {
         "64bit": {
             "url": "https://github.com/AnInsomniacy/rayburst/releases/download/v4.1.1/Rayburst_4.1.1_x64-setup.exe#/dl.7z",
@@ -23,6 +24,15 @@
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\dev.aninsomniacy.rayburst\"",
         "Mount-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\dev.aninsomniacy.rayburst\"",
+        "",
+        "'install-associations', 'uninstall-associations' | ForEach-Object {",
+        "    $content = Get-Content \"$bucketsdir\\$bucket\\scripts\\$app\\$_.ps1\" -Raw",
+        "    $content = $content.Replace('{{scoop_dir}}', $dir)",
+        "    $content = $content.Replace('{{registry_scope}}', $(if ($global) { 'HKLM' } else { 'HKCU' }))",
+        "    Set-Content -Path \"$dir\\$_.ps1\" -Value $content -Encoding UTF8",
+        "}",
+        "& \"$dir\\install-associations.ps1\"",
+        "",
         "Start-RunningApplication -StatePath \"$persist_dir\\.pre-uninstall-state.json\" -ExecutablePath \"$dir\\rayburst.exe\"",
         "Remove-Module -Name utils"
     ],
@@ -33,6 +43,9 @@
         "Dismount-ExternalRuntimeData -Target \"$env:LOCALAPPDATA\\dev.aninsomniacy.rayburst\"",
         "Remove-Module -Name utils"
     ],
+    "uninstaller": {
+        "script": "& \"$dir\\uninstall-associations.ps1\""
+    },
     "shortcuts": [
         [
             "rayburst.exe",
