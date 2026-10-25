@@ -14,23 +14,22 @@
             "hash": "af77756e8c484e019e030724ff31f6f5debd6fe6543135ec4e2b7c8e273da2a4"
         }
     },
-    "installer": {
-        "script": [
-            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{app}'",
-            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{code_GetInstallDir}' -Removal"
-        ]
-    },
     "pre_install": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Initialize-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\Zed\"",
         "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Zed\"",
         "Remove-Module -Name utils"
     ],
+    "installer": {
+        "script": [
+            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{app}'",
+            "Expand-InnoArchive -Path \"$dir\\$fname\" -ExtractDir '{code_GetInstallDir}' -Removal"
+        ]
+    },
     "post_install": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Mount-ExternalRuntimeData -Source \"$persist_dir\\LOCALAPPDATA\" -Target \"$env:LOCALAPPDATA\\Zed\"",
         "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Zed\"",
-        "Start-RunningApplication -StatePath \"$persist_dir\\.pre-uninstall-state.json\" -ExecutablePath \"$dir\\zed.exe\"",
         "Remove-Module -Name utils"
     ],
     "pre_uninstall": [

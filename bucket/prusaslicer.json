@@ -10,26 +10,6 @@
             "extract_dir": "PrusaSlicer-2.9.6"
         }
     },
-    "bin": "prusa-slicer-console.exe",
-    "shortcuts": [
-        [
-            "prusa-slicer.exe",
-            "PrusaSlicer"
-        ]
-    ],
-    "checkver": {
-        "github": "https://api.github.com/repos/prusa3d/PrusaSlicer/releases/latest",
-        "jsonpath": "$.assets[*].browser_download_url",
-        "regex": "PrusaSlicer-([\\d.]+)\\.zip"
-    },
-    "autoupdate": {
-        "architecture": {
-            "64bit": {
-                "url": "https://github.com/prusa3d/PrusaSlicer/releases/download/version_$version/PrusaSlicer-$version.zip",
-                "extract_dir": "PrusaSlicer-$version"
-            }
-        }
-    },
     "pre_install": [
         "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
         "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\PrusaSlicer\"",
@@ -49,5 +29,25 @@
         "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\PrusaSlicer\"",
         "Dismount-ExternalRuntimeData -Target \"$env:LOCALAPPDATA\\PrusaSlicer\"",
         "Remove-Module -Name utils"
-    ]
+    ],
+    "bin": "prusa-slicer-console.exe",
+    "shortcuts": [
+        [
+            "prusa-slicer.exe",
+            "PrusaSlicer"
+        ]
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/prusa3d/PrusaSlicer/releases/latest",
+        "jsonpath": "$.assets[*].browser_download_url",
+        "regex": "PrusaSlicer-([\\d.]+)\\.zip"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/prusa3d/PrusaSlicer/releases/download/version_$version/PrusaSlicer-$version.zip",
+                "extract_dir": "PrusaSlicer-$version"
+            }
+        }
+    }
 }

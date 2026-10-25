@@ -15,6 +15,22 @@
             "extract_dir": "WRCFree_11.3.3.735\\WRCFree_11.3.3.735(x86)"
         }
     },
+    "pre_install": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Wise Registry Cleaner\"",
+        "Remove-Module -Name utils"
+    ],
+    "post_install": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Wise Registry Cleaner\"",
+        "Remove-Module -Name utils"
+    ],
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('WiseRegCleaner') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
+        "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\Wise Registry Cleaner\"",
+        "Remove-Module -Name utils"
+    ],
     "shortcuts": [
         [
             "WiseRegCleaner.exe",
@@ -24,12 +40,6 @@
     "persist": [
         "Backup",
         "config.ini"
-    ],
-    "pre_uninstall": [
-        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
-        "Stop-RunningApplication -ProcessName @('WiseRegCleaner') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
-        "Dismount-ExternalRuntimeData -Target \"$env:APPDATA\\Wise Registry Cleaner\"",
-        "Remove-Module -Name utils"
     ],
     "checkver": {
         "url": "https://www.wisecleaner.com/download.html",
@@ -46,16 +56,5 @@
                 "extract_dir": "WRCFree_$version\\WRCFree_$version(x86)"
             }
         }
-    },
-    "pre_install": [
-        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
-        "Initialize-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Wise Registry Cleaner\"",
-        "Remove-Module -Name utils"
-    ],
-    "post_install": [
-        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
-        "Mount-ExternalRuntimeData -Source \"$persist_dir\\APPDATA\" -Target \"$env:APPDATA\\Wise Registry Cleaner\"",
-        "Start-RunningApplication -StatePath \"$persist_dir\\.pre-uninstall-state.json\" -ExecutablePath \"$dir\\WiseRegCleaner.exe\"",
-        "Remove-Module -Name utils"
-    ]
+    }
 }

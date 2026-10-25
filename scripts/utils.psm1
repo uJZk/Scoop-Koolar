@@ -192,6 +192,7 @@ function Start-RunningApplication {
         Reads the state written by Stop-RunningApplication. A process is only
         restarted when its executable path was recorded and still exists; this
         avoids guessing how to launch transient worker processes.
+        Pass an empty ExecutablePath array to restore services only.
     #>
     [CmdletBinding()]
     param (
@@ -234,7 +235,7 @@ function Start-RunningApplication {
     }
 
     $pathsToStart = @($ExecutablePath | Where-Object { $_ })
-    if ($pathsToStart.Count -eq 0) {
+    if (-not $PSBoundParameters.ContainsKey('ExecutablePath')) {
         $pathsToStart = @($state.ProcessPaths | Where-Object { $_ })
     }
     foreach ($path in ($pathsToStart | Select-Object -Unique)) {
