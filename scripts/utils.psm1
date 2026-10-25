@@ -146,6 +146,10 @@ function Stop-RunningApplication {
         try {
             Stop-Process -Id $currentProcess.Id -Force -ErrorAction Stop
         } catch {
+            # A service or worker may exit after the PID re-check above.
+            if ($null -eq (Get-Process -Id $currentProcess.Id -ErrorAction SilentlyContinue)) {
+                continue
+            }
             throw "Failed to stop $($currentProcess.ProcessName) (PID $($currentProcess.Id)): $($_.Exception.Message)"
         }
     }
