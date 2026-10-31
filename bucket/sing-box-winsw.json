@@ -42,8 +42,6 @@
         "$persistXml = Join-Path $persist_dir 'sing-box.xml'",
         "$installXml = Join-Path $dir 'sing-box.xml'",
         "$urlFile = Join-Path $persist_dir 'config-url.txt'",
-        "$legacyUrlFile = Join-Path $persist_dir 'config_url.txt'",
-        "if (!(Test-Path -LiteralPath $urlFile) -and (Test-Path -LiteralPath $legacyUrlFile)) { Move-Item -LiteralPath $legacyUrlFile -Destination $urlFile }",
         "if (Test-Path -LiteralPath $persistXml) {",
         "    $xmlPath = $persistXml",
         "    [xml]$xml = Get-Content -LiteralPath $xmlPath -Raw",
