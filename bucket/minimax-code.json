@@ -1,10 +1,10 @@
 {
-    "version": "3.1.6",
+    "version": "3.1.10",
     "description": "MiniMax Code desktop AI coding agent for Windows.",
     "homepage": "https://agent.minimaxi.com/",
     "license": "Freeware",
-    "url": "https://filecdn.minimax.chat/public/minimax-agent-prod/release/MiniMax%20Code%20Setup%203.1.6.exe#/dl.7z",
-    "hash": "165d5c03700af869428679ed89ce66961adfffeeb32f91cbbe8ba0256f931cfb",
+    "url": "https://filecdn.minimax.chat/public/minimax-agent-prod/release/MiniMax%20Code%20Setup%203.1.10.exe#/dl.7z",
+    "hash": "7ee10ecffe3d12c7872af49205f1601e27e7038dfc502ed4e48c532eb249ba19",
     "installer": {
         "script": [
             "Expand-7ZipArchive \"$dir\\`$PLUGINSDIR\\app-64.7z\" \"$dir\" -Removal",
