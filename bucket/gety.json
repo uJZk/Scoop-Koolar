@@ -1,13 +1,13 @@
 {
-    "version": "0.6.5",
+    "version": "0.7.0",
     "description": "AI-powered local file search engine.",
     "homepage": "https://gety.ai/",
     "license": "Proprietary",
     "notes": "Gety installs its Windows service using Windows sudo (UAC approval required). Close Gety before updating or uninstalling.",
     "architecture": {
         "64bit": {
-            "url": "https://dl.gety.ai/Gety-x64-0.6.5-beta.exe#/dl.7z",
-            "hash": "f7789d3745941f53da438993b8713ec63b64908fe81f3cca3bd11184a169106e"
+            "url": "https://dl.gety.ai/Gety-x64-0.7.0-beta.exe#/dl.7z",
+            "hash": "6474a923a7d511afccfaa6de2431ab7fa014d9d8537aa3d7c609140683396c7e"
         }
     },
     "pre_install": [
