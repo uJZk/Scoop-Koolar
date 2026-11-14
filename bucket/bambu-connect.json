@@ -1,12 +1,12 @@
 {
-    "version": "2.5.0-beta.15",
+    "version": "2.6.0-beta.0",
     "description": "Send print jobs to Bambu Lab printers and manage printer connections.",
     "homepage": "https://bambulab.com/en/download/bambu-connect",
     "license": "Freeware",
     "architecture": {
         "64bit": {
-            "url": "https://public-cdn.bblmw.com/upgrade/bambu-connect/updates/versions/2.5.0-beta.15/bambu-connect-v2.5.0-beta.15-win32-x64.exe#/dl.7z",
-            "hash": "60008eeaf2ccafc4767c3e510fa3b79326633c905f17512ee6c7137dcb35bb8f"
+            "url": "https://public-cdn.bblmw.com/upgrade/bambu-connect/updates/versions/2.6.0-beta.0/bambu-connect-v2.6.0-beta.0-win32-x64.exe#/dl.7z",
+            "hash": "5b5a1b815e85b04182cac86ea0b7f7db585bafdf873d514633305fb3a93466f9"
         }
     },
     "pre_install": [
