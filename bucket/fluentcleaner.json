@@ -1,0 +1,42 @@
+{
+    "version": "26.11.99",
+    "description": "FluentCleaner - Windows system cleaning tool built with WinUI 3.",
+    "homepage": "https://github.com/builtbybel/FluentCleaner",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/builtbybel/FluentCleaner/releases/download/26.11.99/FluentCleaner-win-x64.zip",
+            "hash": "4aaabb059cbbb3fadddee24c579dfe3d46793735de4b6ca13a780e6bec964d99"
+        }
+    },
+    "pre_uninstall": [
+        "Import-Module $(Join-Path $(Find-BucketDirectory -Root -Name Koolar) scripts/utils.psm1)",
+        "Stop-RunningApplication -ProcessName @('FCleaner') -StatePath \"$persist_dir\\.pre-uninstall-state.json\"",
+        "Remove-Module -Name utils"
+    ],
+    "shortcuts": [
+        [
+            "FCleaner.exe",
+            "FluentCleaner"
+        ]
+    ],
+    "persist": "settings.json",
+    "pre_install": [
+        "if (!(Test-Path \"$dir\\FCleaner.exe\")) {",
+        "    $exe = Get-ChildItem \"$dir\" -Filter \"FCleaner.exe\" -File -Recurse | Select-Object -First 1",
+        "    if (!$exe) { throw \"FCleaner.exe was not found in the archive\" }",
+        "    Get-ChildItem -LiteralPath $exe.DirectoryName -Force | Move-Item -Destination $dir -Force",
+        "}",
+        "if (!(Test-Path \"$dir\\settings.json\") -or !(Get-Item \"$dir\\settings.json\").Length) {",
+        "    New-Item \"$dir\\settings.json\" -ItemType File -Force | Out-Null",
+        "    Set-Content -Path \"$dir\\settings.json\" -Value '{}'",
+        "}"
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/builtbybel/FluentCleaner/releases/latest",
+        "regex": "\"browser_download_url\"\\s*:\\s*\"(?<url>https://github\\.com/builtbybel/FluentCleaner/releases/download/[^\"/]+/(?![^\"/]*Classic)[^\"/]*(?:x64|amd64)[^\"/]*\\.zip)\"[\\s\\S]*?\\|[ \\t]*\\*{0,2}Modern\\*{0,2}[^|]*\\|[\\s\\S]*?(?:\\*\\*|`)v?(?<version>\\d+(?:\\.\\d+)+)"
+    },
+    "autoupdate": {
+        "url": "$matchUrl"
+    }
+}
